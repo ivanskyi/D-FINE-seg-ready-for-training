@@ -20,27 +20,12 @@
 !uv sync
 ```
 
-## Крок 2: Підготовка датасету
+## Крок 2: Підключення датасету
 
-У Kaggle найзручніше завантажувати дані через "Add Data" (вкладка справа) -> "Upload Dataset". Припустимо, ви завантажили ваш архів `dataset.zip` як датасет, його шлях буде в `/kaggle/input/ВАШ_ДАТАСЕТ_В_KAGGLE/`.
+Оскільки ваш датасет вже завантажений на Kaggle (за адресою `www.kaggle.com/datasets/olehiv/dataset-for-training`), вам потрібно лише додати його до вашого Notebook.
+Для цього натисніть **Add Data** (кнопка справа або зверху) -> знайдіть `dataset-for-training` (від olehiv) і додайте його. 
 
-Розпакуємо його в робочу директорію, щоб мати можливість з ним працювати:
-
-```bash
-# 1) видалити старий датасет (якщо є)
-!rm -rf /kaggle/working/my_dataset
-
-# 2) створити чисту папку
-!mkdir -p /kaggle/working/my_dataset
-
-# 3) розпакувати новий архів (змініть шлях до вашого zip файлу)
-!unzip -q "/kaggle/input/ВАШ_ДАТАСЕТ_В_KAGGLE/dataset.zip" -d "/kaggle/working/my_dataset"
-
-# 4) перевірка
-!ls /kaggle/working/my_dataset
-print("✅ dataset fully reset and extracted")
-```
-*(Якщо ви додали вже розпакований датасет через Kaggle Datasets, його шлях буде приблизно `/kaggle/input/dataset-name`. Тоді цей крок розпакування не потрібен — просто вкажіть цей шлях у `train.data_path` на Кроці 5).*
+Після цього датасет буде автоматично доступний за шляхом: `/kaggle/input/dataset-for-training/`. Ніякого розпакування робити не потрібно!
 
 ## Крок 3: Валідація датасету
 
@@ -49,8 +34,8 @@ print("✅ dataset fully reset and extracted")
 ```python
 import os
 
-# Якщо ви розпакували дані у working:
-root = "/kaggle/working/my_dataset/"
+# Вказуємо шлях до доданого датасету:
+root = "/kaggle/input/dataset-for-training/"
 required = ["train.json", "val.json", "test.json", "images"]
 
 for item in required:
@@ -99,7 +84,7 @@ print("✅ dataset structure valid")
     train.mosaic_augs.mosaic_prob=0.0 \
     train.augs.rotation_p=0.0 \
     train.root=/kaggle/working/D-FINE-seg \
-    train.data_path=/kaggle/working/my_dataset \
+    train.data_path=/kaggle/input/dataset-for-training \
     train.path_to_save=/kaggle/working/D-FINE-seg/output/models \
     train.debug_img_path=/kaggle/working/D-FINE-seg/output/debug_images \
     train.eval_preds_path=/kaggle/working/D-FINE-seg/output/eval_preds \
