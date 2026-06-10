@@ -10,7 +10,7 @@
 
 ```bash
 # Якщо ваш код знаходиться на GitHub, клонуйте його:
-!git clone <URL_ВАШОГО_РЕПОЗИТОРІЮ> /content/D-FINE-seg
+!git clone https://github.com/ivanskyi/D-FINE-seg-ready-for-training /content/D-FINE-seg
 # Якщо ви завантажуєте проект архівом, розпакуйте його в папку /content/D-FINE-seg
 
 %cd /content/D-FINE-seg
