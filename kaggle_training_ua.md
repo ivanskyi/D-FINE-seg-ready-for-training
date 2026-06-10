@@ -52,7 +52,7 @@ print("✅ dataset structure valid")
 
 ```bash
 !mkdir -p /kaggle/working/D-FINE-seg/pretrained
-!wget https://github.com/Peterande/D-FINE/releases/download/v2.0/dfine_x_coco.pt -O /kaggle/working/D-FINE-seg/pretrained/dfine_x_coco.pt
+!wget https://github.com/Peterande/storage/releases/download/dfinev1.0/dfine_x_coco.pth -O /kaggle/working/D-FINE-seg/pretrained/dfine_x_coco.pth
 ```
 
 ## Крок 5: Запуск тренування
@@ -77,7 +77,7 @@ print("✅ dataset structure valid")
     train.coco_dataset=True \
     train.use_one_class=False \
     train.pretrained_dataset=coco \
-    train.pretrained_model_path=/kaggle/working/D-FINE-seg/pretrained/dfine_x_coco.pt \
+    train.pretrained_model_path=/kaggle/working/D-FINE-seg/pretrained/dfine_x_coco.pth \
     train.img_size=[640,640] \
     train.keep_ratio=True \
     train.label_to_name="{1:'car', 2:'interior', 3:'license-plate', 4:'podium'}" \

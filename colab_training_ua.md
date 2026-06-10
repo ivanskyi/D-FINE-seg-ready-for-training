@@ -22,7 +22,14 @@
 
 ## Крок 2: Розпакування датасету з Google Drive
 
-Підключіть ваш Google Drive (зазвичай це робиться через бічну панель Colab або скриптом `from google.colab import drive; drive.mount('/content/drive')`), після чого виконайте скрипт:
+Підключіть ваш Google Drive. Для цього виконайте в окремій Python-комірці:
+
+```python
+from google.colab import drive
+drive.mount('/content/drive')
+```
+
+Після підключення диска, виконайте цей bash-скрипт для розпакування:
 
 ```bash
 # 1) видалити старий датасет (якщо є)
@@ -63,7 +70,7 @@ print("✅ dataset structure valid")
 
 ```bash
 !mkdir -p /content/D-FINE-seg/pretrained
-!wget https://github.com/Peterande/D-FINE/releases/download/v2.0/dfine_x_coco.pt -O /content/D-FINE-seg/pretrained/dfine_x_coco.pt
+!wget https://github.com/Peterande/storage/releases/download/dfinev1.0/dfine_x_coco.pth -O /content/D-FINE-seg/pretrained/dfine_x_coco.pth
 ```
 
 ## Крок 5: Запуск тренування
@@ -88,7 +95,7 @@ print("✅ dataset structure valid")
     train.coco_dataset=True \
     train.use_one_class=False \
     train.pretrained_dataset=coco \
-    train.pretrained_model_path=/content/D-FINE-seg/pretrained/dfine_x_coco.pt \
+    train.pretrained_model_path=/content/D-FINE-seg/pretrained/dfine_x_coco.pth \
     train.img_size=[640,640] \
     train.keep_ratio=True \
     train.label_to_name="{1:'car', 2:'interior', 3:'license-plate', 4:'podium'}" \
