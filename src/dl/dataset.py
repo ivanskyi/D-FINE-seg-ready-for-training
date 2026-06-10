@@ -608,45 +608,49 @@ class CustomDataset(Dataset):
                 masks_list = [poly_abs_to_mask(p, H, W) for p in polys_abs]  # original shape
 
             # Apply transformations
-            if self.return_masks:
-                transformed = self.transform(
-                    image=image,
-                    bboxes=targets[:, 1:],
-                    class_labels=targets[:, 0],
-                    masks=masks_list,
-                    box_indices=list(range(len(targets))),
-                )
-                masks_all = transformed.get("masks", [])
-                surviving_indices = transformed.get("box_indices", [])
+            try:
+                if self.return_masks:
+                    transformed = self.transform(
+                        image=image,
+                        bboxes=targets[:, 1:],
+                        class_labels=targets[:, 0],
+                        masks=masks_list,
+                        box_indices=list(range(len(targets))),
+                    )
+                    masks_all = transformed.get("masks", [])
+                    surviving_indices = transformed.get("box_indices", [])
 
-                # Albumentations filters bboxes (and label_fields) but NOT masks.
-                # Use surviving_indices to select only masks corresponding to surviving boxes.
-                if masks_all and surviving_indices:
-                    masks = [masks_all[int(i)] for i in surviving_indices]
-                    masks_t = torch.stack([m.squeeze().to(dtype=torch.uint8) for m in masks], dim=0)
-                    surviving_polys = [polys_abs[int(i)] for i in surviving_indices]
+                    # Albumentations filters bboxes (and label_fields) but NOT masks.
+                    # Use surviving_indices to select only masks corresponding to surviving boxes.
+                    if masks_all and surviving_indices:
+                        masks = [masks_all[int(i)] for i in surviving_indices]
+                        masks_t = torch.stack([m.squeeze().to(dtype=torch.uint8) for m in masks], dim=0)
+                        surviving_polys = [polys_abs[int(i)] for i in surviving_indices]
+                    else:
+                        masks_t = torch.zeros(
+                            (0, transformed["image"].shape[1], transformed["image"].shape[2]),
+                            dtype=torch.uint8,
+                        )
+                        surviving_polys = []
+
+                    if self.mode != "train":
+                        polys_out = surviving_polys
                 else:
+                    transformed = self.transform(
+                        image=image,
+                        bboxes=targets[:, 1:],
+                        class_labels=targets[:, 0],
+                        box_indices=list(range(len(targets))),
+                    )
                     masks_t = torch.zeros(
                         (0, transformed["image"].shape[1], transformed["image"].shape[2]),
                         dtype=torch.uint8,
                     )
-                    surviving_polys = []
 
-                if self.mode != "train":
-                    polys_out = surviving_polys
-            else:
-                transformed = self.transform(
-                    image=image,
-                    bboxes=targets[:, 1:],
-                    class_labels=targets[:, 0],
-                    box_indices=list(range(len(targets))),
-                )
-                masks_t = torch.zeros(
-                    (0, transformed["image"].shape[1], transformed["image"].shape[2]),
-                    dtype=torch.uint8,
-                )
-
-            image = transformed["image"]  # RGB, CHW
+                image = transformed["image"]  # RGB, CHW
+            except Exception as e:
+                logger.warning(f"Skipping broken annotation for {image_path}: {e}")
+                return None
             boxes = torch.as_tensor(
                 np.array(transformed["bboxes"]), dtype=torch.float32
             )  # abs xyxy

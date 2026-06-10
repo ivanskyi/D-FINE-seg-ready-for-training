@@ -498,7 +498,7 @@ class Trainer:
             synchronize()
         return metrics
 
-    def save_model(self, metrics, best_metric):
+    def save_model(self, metrics, best_metric, epoch):
         model_to_save = self.model
         if self.ema_model:
             model_to_save = self.ema_model.model
@@ -508,6 +508,7 @@ class Trainer:
 
         self.path_to_save.mkdir(parents=True, exist_ok=True)
         torch.save(model_to_save.state_dict(), self.path_to_save / "last.pt")
+        torch.save(model_to_save.state_dict(), self.path_to_save / f"epoch_{epoch}.pt")
 
         # mean from chosen metrics
         decision_metric = np.mean(
@@ -746,7 +747,7 @@ class Trainer:
 
             # Only rank 0 saves and logs
             if self.is_main:
-                best_metric = self.save_model(metrics, best_metric)
+                best_metric = self.save_model(metrics, best_metric, epoch)
                 save_metrics(
                     {},
                     metrics,
